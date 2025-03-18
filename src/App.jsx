@@ -2,10 +2,11 @@ import React from "react";
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import Navbar from "./components/Navbar/Nav.jsx";
 import Footer from "./components/Footer/Footer.jsx";
-import "./components/Footer/Footer.css";
-import "./components/Navbar/Nav.css";
 import LandingPage from "./pages/LandingPage/LandingPage.jsx";
 import VisualDebugger from "./pages/VisualDebugger/VisualDebugger.jsx";
+import Login from "./pages/Auth/Login";
+import Signup from "./pages/Auth/Signup";
+import ProtectedRoute from "./components/Auth/ProtectedRoute.jsx";
 import "./App.css";
 
 const Layout = () => {
@@ -17,7 +18,9 @@ const Layout = () => {
       <Navbar />
       <Routes>
         <Route path="/" element={<LandingPage />} />
-        <Route path="/debugger" element={<VisualDebugger />} />
+        <Route path="/debugger" element={<ProtectedRoute><VisualDebugger /></ProtectedRoute>} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
       </Routes>
       {!hideFooterRoutes.includes(location.pathname) && <Footer />}
     </>
