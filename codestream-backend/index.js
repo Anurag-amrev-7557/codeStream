@@ -16,7 +16,8 @@ const DEFAULT_PORT = process.env.PORT || 5000;
 app.use(express.json());
 const allowedOrigins = [
     "http://localhost:5173", // Local frontend
-    "https://code-stream-96syog8wp-anurag-amrev-7557s-projects.vercel.app", // Vercel frontend
+    "https://code-stream-96syog8wp-anurag-amrev-7557s-projects.vercel.app",
+    "https://code-stream-eta.vercel.app"// Vercel frontend
   ];
   
   app.use(
