@@ -1,10 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { GoogleOAuthProvider, GoogleLogin, googleLogout } from "@react-oauth/google";
 import {jwtDecode} from "jwt-decode";
 import "./Nav.css";
-
-const clientId = import.meta.env.GOOGLE_CLIENT_ID; // Replace with your actual Google Client ID
 
 const Navbar = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -31,7 +28,6 @@ const Navbar = () => {
   };
 
   return (
-    <GoogleOAuthProvider clientId={clientId}>
       <nav className="navbar">
         <Link to="/" className="logo">
           <img src="logo.png" alt="CodeStream" />
@@ -76,7 +72,6 @@ const Navbar = () => {
           )}
         </div>
       </nav>
-    </GoogleOAuthProvider>
   );
 };
 

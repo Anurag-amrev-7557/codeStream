@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
-import { motion, AnimatePresence, transform } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import MonacoEditor from "@monaco-editor/react";
 import ReactFlow, {
   Controls,
   Background,
   MarkerType,
   applyNodeChanges,
+  useReactFlow,
+  ReactFlowProvider
 } from "reactflow";
 import dagre from "dagre";
 import "reactflow/dist/style.css";
@@ -77,6 +79,30 @@ const VisualDebugger = () => {
     editorRef.current.decorations = []; // Initialize decorations
   };
 
+  const FlowController = ({ currentStep, nodes }) => {
+    const { setCenter } = useReactFlow();
+
+    useEffect(() => {
+        if (nodes.length > 0 && nodes[currentStep]) {
+            const activeNode = nodes[currentStep];
+            
+            // Get the viewport dimensions
+            const section = document.getElementById("visual-debugger");
+            if (!section) return;
+
+            const { width: sectionWidth, height: sectionHeight } = section.getBoundingClientRect();
+            
+            // Adjust centering to prevent nodes from going out of view
+            const adjustedX = activeNode.position.x - sectionWidth / 150 + 80;
+            const adjustedY = activeNode.position.y - sectionHeight / 150 + 100;
+
+            setCenter(adjustedX, adjustedY, { zoom: 1.5 });
+        }
+    }, [currentStep, nodes, setCenter]);
+
+    return null;
+};
+
   useEffect(() => {
     if (editorRef.current) {
       editorRef.current.getModel()?.setLanguage(language);
@@ -120,18 +146,6 @@ const VisualDebugger = () => {
     (changes) => setNodes((nds) => applyNodeChanges(changes, nds)),
     []
   );
-
-  useEffect(() => {
-    if (nodes.length > 0 && nodes[currentStep]) {
-      const activeNode = nodes[currentStep];
-  
-      setTimeout(() => {
-        reactFlowInstance.setCenter(activeNode.position.x, activeNode.position.y, {
-          zoom: 1.5, // Adjust zoom level if needed
-        });
-      }, 100);
-    }
-  }, [currentStep, nodes]);
 
   const handleNext = () => {
     if (currentStep < debuggedQueue.length - 1) {
@@ -364,15 +378,18 @@ const VisualDebugger = () => {
                 exit={{ scale: 0, opacity: 0, transition: { duration: 0.5 } }}
               />
             ) : (
+              <ReactFlowProvider>
               <ReactFlow 
                 nodes={nodes}
                 edges={edges} 
                 onNodesChange={onNodesChange} 
                 fitView
               >
+                <FlowController currentStep={currentStep} nodes={nodes} />
                 <Controls />
                 <Background variant="dots" gap={12} size={1} />
               </ReactFlow>
+              </ReactFlowProvider>
             )}
           </AnimatePresence>
         </div>
